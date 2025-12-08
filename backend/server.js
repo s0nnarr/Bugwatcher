@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { Sequelize } from "sequelize";
-
+import userRouter from './routers/userRouter.js';
 
 dotenv.config();
 
@@ -48,3 +48,5 @@ const startServer = async () => {
 
 startServer();
 
+/* Routers */
+app.use('/users', userRouter);
