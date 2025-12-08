@@ -20,7 +20,6 @@ export async function up(queryInterface, Sequelize) {
       password: {
         type: Sequelize.STRING,
         allowNull: false
-
       },
       role: {
         type: Sequelize.ENUM("TST", "MP"),
