@@ -57,13 +57,13 @@ export default function AddProjectModal({ onClose }) {
             required
           />
 
-          <button type="submit" className="submit-btn">
-            Salvează proiect
-          </button>
+          <div className="modal-buttons">
+    <button onClick={handleSubmit}>Salvează proiect</button>
+    <button className="cancel-btn" onClick={onClose}>Anulează</button>
+</div>
 
-          <button type="button" onClick={onClose} className="cancel-btn">
-            Anulează
-          </button>
+
+         
         </form>
       </div>
     </div>

@@ -1,8 +1,10 @@
 import { useState, useContext } from "react";
 import { AppContext } from "../context/AppContext";
+import { AuthContext } from "../context/AuthContext";
 
 export default function AddBugModal({ projectId, onClose }) {
   const { addBug } = useContext(AppContext);
+  const { user } = useContext(AuthContext);
 
   const [severity, setSeverity] = useState("Low");
   const [priority, setPriority] = useState("Low");
@@ -18,15 +20,17 @@ export default function AddBugModal({ projectId, onClose }) {
       priority,
       description,
       commitLink,
+      reporter: user.email,
     });
 
+    alert("Bug raportat cu succes!");
     onClose();
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>Raporteaza un bug</h2>
+        <h2>Raportează bug</h2>
 
         <form onSubmit={handleSubmit} className="bug-form">
 
@@ -48,24 +52,23 @@ export default function AddBugModal({ projectId, onClose }) {
 
           <label>Descriere</label>
           <textarea
+            required
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Descrie problema..."
-            required
           />
 
-          <label>Link commit</label>
+          <label>Link commit asociat</label>
           <input
             type="text"
+            required
             value={commitLink}
             onChange={(e) => setCommitLink(e.target.value)}
-            placeholder="https://github.com/user/repo/commit/123..."
-            required
+            placeholder="https://github.com/.../commit/123"
           />
 
-          <button type="submit" className="add-btn">Raporteaza bug</button>
-          <button type="button" className="cancel-btn" onClick={onClose}>Anuleaza</button>
-
+          <button className="add-btn" type="submit">Trimite bug</button>
+          <button type="button" className="cancel-btn" onClick={onClose}>Anulează</button>
         </form>
       </div>
     </div>

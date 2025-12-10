@@ -4,18 +4,15 @@ import { createContext, useState } from "react";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-
-  // Lista tuturor proiectelor
+  // 🔵 Toate proiectele
   const [projects, setProjects] = useState([]);
 
-  // Lista globală a bug-urilor
+  // 🔵 Toate bug-urile
   const [bugs, setBugs] = useState([]);
 
-  // ============================
-  // MP ➜ Adaugă proiect
-  // ============================
+  // 🔹 MP ➜ adaugă proiect
   const addProject = (project) => {
-    setProjects(prev => [
+    setProjects((prev) => [
       ...prev,
       {
         id: Date.now(),
@@ -23,18 +20,16 @@ export const AppProvider = ({ children }) => {
         repo: project.repo,
         owner: project.owner,
         team: project.team || [],
-        testers: [],      // TST se va adăuga aici
-        bugs: []          // lista de ID-uri de bug-uri
+        testers: [],
+        bugs: []
       }
     ]);
   };
 
-  // ============================
-  // TST ➜ Se alătură unui proiect
-  // ============================
+  // 🔹 TST ➜ se alătură proiectului
   const addTesterToProject = (projectId, testerEmail) => {
-    setProjects(prev =>
-      prev.map(p =>
+    setProjects((prev) =>
+      prev.map((p) =>
         p.id === projectId
           ? { ...p, testers: [...p.testers, testerEmail] }
           : p
@@ -42,28 +37,25 @@ export const AppProvider = ({ children }) => {
     );
   };
 
-  // ============================
-  // MP sau TST ➜ Adaugă bug în proiect
-  // ============================
+  // 🔹 TST ➜ raportează bug
   const addBug = (bug) => {
     const newBug = {
       id: Date.now(),
-      title: bug.title,
+      projectId: bug.projectId,
+      description: bug.description,
       severity: bug.severity,
       priority: bug.priority,
-      description: bug.description,
       commitLink: bug.commitLink,
-      projectId: bug.projectId,
+      reporter: bug.reporter,
       status: "Open",
-      assignedTo: null
+      assignedTo: null,
+      resolveCommit: null
     };
 
-    // Adaugăm bug-ul în lista globală
-    setBugs(prev => [...prev, newBug]);
+    setBugs((prev) => [...prev, newBug]);
 
-    // Și îl adăugăm în proiectul corespunzător
-    setProjects(prev =>
-      prev.map(p =>
+    setProjects((prev) =>
+      prev.map((p) =>
         p.id === bug.projectId
           ? { ...p, bugs: [...p.bugs, newBug.id] }
           : p
@@ -71,12 +63,10 @@ export const AppProvider = ({ children }) => {
     );
   };
 
-  // ============================
-  // MP ➜ Își alocă un bug
-  // ============================
+  // 🔹 MP ➜ își alocă bug
   const assignBug = (bugId, userEmail) => {
-    setBugs(prev =>
-      prev.map(b =>
+    setBugs((prev) =>
+      prev.map((b) =>
         b.id === bugId
           ? { ...b, assignedTo: userEmail, status: "In Progress" }
           : b
@@ -84,12 +74,10 @@ export const AppProvider = ({ children }) => {
     );
   };
 
-  // ============================
-  // MP ➜ Marchează bug ca rezolvat
-  // ============================
+  // 🔹 MP ➜ marchează rezolvat
   const resolveBug = (bugId, commitLink) => {
-    setBugs(prev =>
-      prev.map(b =>
+    setBugs((prev) =>
+      prev.map((b) =>
         b.id === bugId
           ? { ...b, status: "Resolved", resolveCommit: commitLink }
           : b
@@ -98,16 +86,18 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{
-      projects,
-      addProject,
-      addTesterToProject,
+    <AppContext.Provider
+      value={{
+        projects,
+        bugs,
 
-      bugs,
-      addBug,
-      assignBug,
-      resolveBug
-    }}>
+        addProject,
+        addTesterToProject,
+        addBug,
+        assignBug,
+        resolveBug
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

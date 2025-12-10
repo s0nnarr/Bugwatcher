@@ -6,69 +6,80 @@ export default function BugListForMP() {
   const { projects, bugs, assignBug, resolveBug } = useContext(AppContext);
   const { user } = useContext(AuthContext);
 
-  // Proiectele detinute de MP (owner = email)
-  const myProjectIds = projects
-    .filter(p => p.owner === user.email)
-    .map(p => p.id);
+  // proiectele unde acest MP este owner
+  const ownedProjects = projects.filter(p => p.owner === user.email);
+  const ownedProjectIds = ownedProjects.map(p => p.id);
 
-  const myBugs = bugs.filter(b => myProjectIds.includes(b.projectId));
+  // bug-urile lor
+  const myBugs = bugs.filter(b => ownedProjectIds.includes(b.projectId));
 
   if (myBugs.length === 0) {
-    return <p>Nu exista bug-uri pentru proiectele tale inca.</p>;
+    return <p>Nu există bug-uri pentru proiectele tale.</p>;
   }
+
+  const getProjectName = (id) =>
+    (projects.find(p => p.id === id) || {}).name;
 
   const handleAssign = (bugId) => {
     assignBug(bugId, user.email);
   };
 
   const handleResolve = (bugId) => {
-    const commitLink = window.prompt("Introdu link-ul commit-ului de rezolvare:");
-    if (!commitLink) return;
-    resolveBug(bugId, commitLink);
+    const link = window.prompt("Link commit rezolvare:");
+    if (link) {
+      resolveBug(bugId, link);
+    }
   };
 
   return (
-    <>
+    <div className="bug-list-mp">
       <h3>Bug-urile proiectelor mele</h3>
-      <table className="project-table">
+
+      <table className="bug-table">
         <thead>
           <tr>
+            <th>Proiect</th>
             <th>Descriere</th>
             <th>Severitate</th>
             <th>Prioritate</th>
             <th>Status</th>
             <th>Asignat</th>
-            <th>Commit (rezolvare)</th>
-            <th>Actiuni</th>
+            <th>Commit Rezolvare</th>
+            <th>Acțiuni</th>
           </tr>
         </thead>
+
         <tbody>
           {myBugs.map(b => (
             <tr key={b.id}>
+              <td>{getProjectName(b.projectId)}</td>
               <td>{b.description}</td>
               <td>{b.severity}</td>
               <td>{b.priority}</td>
               <td>{b.status}</td>
-              <td>{b.assignedTo || "-"}</td>
+              <td>{b.assignedTo || "—"}</td>
               <td>
                 {b.resolveCommit ? (
                   <a href={b.resolveCommit} target="_blank">Vezi commit</a>
-                ) : (
-                  "-"
-                )}
+                ) : "—"}
               </td>
               <td>
-                <button onClick={() => handleAssign(b.id)}>
-                  Aloca-mi
-                </button>
-                <button onClick={() => handleResolve(b.id)}>
-                  Marcheaza rezolvat
-                </button>
+                {b.status === "Open" && (
+                  <button onClick={() => handleAssign(b.id)}>
+                    Alocă-mi
+                  </button>
+                )}
+
+                {b.status !== "Resolved" && (
+                  <button onClick={() => handleResolve(b.id)}>
+                    Rezolvat ✔
+                  </button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }

@@ -1,34 +1,36 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
+import RegisterModal from "./RegisterModal";
 
 export default function Navbar() {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, logoutUser } = useContext(AuthContext);
+
   const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   return (
     <>
-    <nav className="navbar">
-      <div className="logo">BugWatcher</div>
+      <nav className="navbar">
+        <h1 className="logo">BugWatcher</h1>
 
-      <div className="nav-actions">
         {!user && (
-          <>
+          <div>
+            <button onClick={() => setShowRegister(true)}>Register</button>
             <button onClick={() => setShowLogin(true)}>Login</button>
-            <button>Register</button>
-          </>
+          </div>
         )}
 
         {user && (
-          <>
-            <span>{user.name} ({user.role})</span>
-            <button onClick={() => setUser(null)}>Logout</button>
-          </>
+          <div>
+            <span>{user.email} ({user.role})</span>
+            <button onClick={logoutUser}>Logout</button>
+          </div>
         )}
-      </div>
-    </nav>
+      </nav>
 
-    {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+      {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
     </>
   );
 }

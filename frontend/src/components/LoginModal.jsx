@@ -1,62 +1,43 @@
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function LoginModal({ onClose }) {
-  const { setUser } = useContext(AuthContext);
+  const { loginUser } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // =========================
-    // LOGICA DE LOGIN
-    // =========================
+    const logged = loginUser(email, password);
 
-    let role = "TST"; // default
-
-    // regula simplă: dacă emailul conține "mp", userul e MP
-    if (email.toLowerCase().includes("mp")) {
-      role = "MP";
+    if (!logged) {
+      setError("Email sau parolă incorectă.");
+      return;
     }
 
-    // setează user-ul logat
-    setUser({
-      name: email.split("@")[0], // numele = partea din fața emailului
-      email,
-      role,
-    });
-
-    onClose(); // închide modalul
+    onClose();
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal">
-
         <h2>Autentificare</h2>
 
-        <form onSubmit={handleLogin}>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <form onSubmit={handleLogin} className="login-form">
           <label>Email</label>
-          <input 
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
 
           <label>Parolă</label>
-          <input 
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
 
-          <button type="submit">Login</button>
-          <button type="button" onClick={onClose}>Anulează</button>
+          <button type="submit" className="add-btn">Login</button>
+          <button type="button" className="cancel-btn" onClick={onClose}>Anulează</button>
         </form>
-
       </div>
     </div>
   );
