@@ -1,68 +1,434 @@
+/* =========================================================
+   THEME + RESET
+   ========================================================= */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #e0eaff;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --accent: #9333ea;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --bg: #f7f9fc;
+  --bg-alt: #ffffff;
+
+  --text: #1e293b;
+  --text-light: #64748b;
+
+  --border: #e2e8f0;
+
+  --radius: 18px;
+  --radius-lg: 22px;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.06);
+
+  --transition: 0.25s ease;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
 body {
-  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.navbar {
+  width: 100%;
+  background: var(--bg-alt);
+  padding: 14px 26px;
+
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: space-between;
+  align-items: center;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.navbar .logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.navbar button {
+  padding: 12px 22px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius);
+  border: none;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-size: 15px;
+  transition: var(--transition);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.navbar button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.navbar span {
+  font-weight: 500;
+  margin-right: 12px;
+}
+
+/* =========================================================
+   GLOBAL BUTTONS
+   ========================================================= */
+
+.add-btn,
+.cancel-btn {
+  border-radius: var(--radius);
+  padding: 12px 22px;
+  font-size: 15px;
+  margin: 10px 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.add-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow);
+}
+
+.add-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.cancel-btn {
+  background: var(--text-light);
+  color: white;
+  border: none;
+}
+
+.cancel-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   DASHBOARD PANELS
+   ========================================================= */
+
+.mp-dashboard,
+.tst-dashboard {
+  padding: 34px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+h3 {
+  margin-top: 32px;
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+/* =========================================================
+   CARDURI TST
+   ========================================================= */
+
+.tester-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.tester-project-card {
+  background: var(--bg-alt);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.tester-project-card:hover {
+  transform: translateY(-4px);
+}
+
+.tester-project-card h4 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.tester-project-card button {
+  margin-top: 12px;
+  margin-right: 8px;
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Badge pentru tester */
+.tester-badge {
+  display: inline-block;
+  background: #d1fae5;
+  color: #065f46;
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+/* =========================================================
+   TABEL — MODERN, CLEAN
+   ========================================================= */
+
+.project-table,
+.bug-table {
+  width: 100%;
+  background: var(--bg-alt);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-top: 28px;
+  border-collapse: collapse;
+}
+
+.project-table th,
+.bug-table th {
+  background: var(--primary);
+  color: white;
+  padding: 16px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.project-table td,
+.bug-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14.5px;
+}
+
+.bug-table tr:hover {
+  background: var(--primary-light);
+}
+
+/* =========================================================
+   MODALE — PREMIUM LOOK
+   ========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.modal {
+  background: var(--bg-alt);
+  padding: 32px;
+  width: 420px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  animation: popIn 0.2s ease-out;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.modal h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+  background: #f9fafb;
+  font-size: 15px;
+}
+
+.modal textarea {
+  height: 90px;
+  resize: none;
+}
+
+/* =========================================================
+   MODAL — FINAL, PERFECTLY CENTERED
+   ========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.modal {
+  width: 500px;
+  max-width: 92%;
+  background: white;
+  padding: 40px 28px;
+  border-radius: 28px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  animation: popIn 0.2s ease-out;
+  margin: 0 auto;
+}
+
+.modal h2 {
+  font-size: 26px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  background: #f9fafb;
+  font-size: 15px;
+}
+
+.modal textarea {
+  height: 90px;
+  resize: none;
+}
+
+/* NEW: Perfect centering block for buttons */
+.modal .modal-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.modal .modal-buttons button {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+  border-radius: 28px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.modal .cancel-btn {
+  background: #6b7280 !important;
+}
+
+/* Animation */
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
   }
-  a:hover {
-    color: #747bff;
+
+  .modal {
+    width: 90%;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .project-table,
+  .bug-table {
+    font-size: 14px;
+  }
+
+  .project-table td,
+  .bug-table td {
+    padding: 12px;
   }
 }
+.navbar button {
+  margin-left: 14px !important;
+  margin-right: 0 !important;
+  border-radius: 22px !important;
+}
+button {
+  background: var(--primary) !important;
+  color: white !important;
+  padding: 12px 22px !important;
+  border-radius: 22px !important;
+  border: none !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  transition: 0.25s ease !important;
+}
+
+button:hover {
+  background: var(--primary-hover) !important;
+  transform: translateY(-2px) !important;
+}
+.modal button {
+  width: 100%;
+  margin-top: 12px;
+}
+.modal {
+  border-radius: 26px !important;
+  padding: 36px !important;
+  background: white !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12) !important;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  border-radius: 18px !important;
+  padding: 14px !important;
+  font-size: 15px !important;
+}
+.tester-project-card button {
+  margin-right: 10px !important;
+  margin-top: 14px !important;
+  border-radius: 22px !important;
+}
+.bug-table button {
+  padding: 8px 20px !important;
+  border-radius: 22px !important;
+  margin-right: 8px !important;
+  background: var(--primary) !important;
+}
+
