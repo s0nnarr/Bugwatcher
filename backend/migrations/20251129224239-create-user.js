@@ -24,7 +24,7 @@ export async function up(queryInterface, Sequelize) {
       role: {
         type: Sequelize.ENUM("TST", "MP"),
         allowNull: false,
-        toDefaultValue: "TST"
+        defaultValue: "TST"
       },
       createdAt: {
         allowNull: false,
