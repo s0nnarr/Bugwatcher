@@ -2,21 +2,18 @@
 /** @type {import('sequelize-cli').Migration} */
 
 export async function up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Projects', {
+    await queryInterface.createTable('Teams', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
+      name: {
         type: Sequelize.STRING
       },
       description: {
         type: Sequelize.TEXT
-      },
-      commit_link: {
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -30,6 +27,5 @@ export async function up(queryInterface, Sequelize) {
   }
 
 export async function down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Projects');
-}
-;
+    await queryInterface.dropTable('Teams');
+  }

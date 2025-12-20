@@ -15,6 +15,10 @@ export default (sequelize, DataTypes) => {
         foreignKey: 'assignedUserId',
         as: 'assignedBugs'
       })
+      this.belongsTo(models.Team, {
+        foreignKey: 'teamId',
+        as: 'team'
+      })
     }
   }
   User.init(
