@@ -6,7 +6,15 @@ import { Model } from 'sequelize';
 export default (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // define association here
+      this.belongsToMany(models.Project, {
+        through: models.UserProject,
+        foreignKey: 'userId',
+        otherKey: 'projectId'
+      })
+      this.hasMany(models.Bug, {
+        foreignKey: 'assignedUserId',
+        as: 'assignedBugs'
+      })
     }
   }
   User.init(

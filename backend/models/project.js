@@ -1,11 +1,21 @@
 'use strict';
 import { Model } from 'sequelize';
+
+
 export default (sequelize, DataTypes) => {
   class Project extends Model {
   
 
     static associate(models) {
-      // define association here
+      this.belongsToMany(models.User, {
+        through: models.UserProject,
+        foreignKey: 'projectId',
+        otherKey: 'userId'
+      })
+      this.hasMany(models.Bug, {
+        foreignKey: 'projectId',
+        as: 'bugs'
+      })
     }
   }
   Project.init({
