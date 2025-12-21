@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
 
   // lista de useri înregistrați
   const [users, setUsers] = useState([
-    // useri demo
+    // useri demo 
     { email: "mp@mara.com", password: "1234", role: "MP" },
     { email: "tst@mara.com", password: "1234", role: "TST" },
   ]);

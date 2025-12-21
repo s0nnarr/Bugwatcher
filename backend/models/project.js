@@ -7,21 +7,18 @@ export default (sequelize, DataTypes) => {
   
 
     static associate(models) {
-      this.belongsTo(models.User, {
+      this.belongsToMany(models.User, {
         through: models.UserProject,
         foreignKey: 'projectId',
-        otherKey: 'userId'
-      }),
+        otherKey: 'userId',
+        as: 'users'
+      });
       this.hasMany(models.Bug, {
         foreignKey: 'projectId',
         as: 'bugs'
-      }),
-      this.belongsTo(models.Team, {
-        foreignKey: 'teamId',
-        as: 'team'
-      })
+      });
     }
-  }
+}
   Project.init({
     title: {
       type: DataTypes.STRING,

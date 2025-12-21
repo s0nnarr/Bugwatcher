@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { Sequelize } from "sequelize";
 import userRouter from './routers/userRouter.js';
+import projectRouter from './routers/projectRouter.js';
 
 dotenv.config();
 
@@ -50,3 +51,4 @@ startServer();
 
 /* Routers */
 app.use('/users', userRouter);
+app.use('/projects', projectRouter);
