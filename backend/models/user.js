@@ -37,6 +37,14 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.ENUM("MP", "TST"),
         allowNull: false,
         defaultValue: "TST"
+      },
+      teamId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Teams',
+          key: 'id'
+        }
       }
 
   }, {
