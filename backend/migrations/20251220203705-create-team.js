@@ -1,30 +1,19 @@
 'use strict';
-
-import { toDefaultValue } from 'sequelize/lib/utils';
-
 /** @type {import('sequelize-cli').Migration} */
 
 export async function up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('Teams', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
+      name: {
+        type: Sequelize.STRING
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      role: {
-        type: Sequelize.ENUM("TST", "MP"),
-        allowNull: false,
-        toDefaultValue: "TST"
+      description: {
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,
@@ -35,8 +24,8 @@ export async function up(queryInterface, Sequelize) {
         type: Sequelize.DATE
       }
     });
-};
+  }
 
 export async function down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
-}
+    await queryInterface.dropTable('Teams');
+  }

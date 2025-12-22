@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import bcrypt from "bcrypt";
+
 const { User } = db;
 
 export const createUser = async (req, res) => {
@@ -92,7 +93,6 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Validări simple (doar dacă vin în body)
     if (email !== undefined) {
       if (!email || !email.includes("@")) {
         return res.status(400).json({ message: "Email invalid." });
