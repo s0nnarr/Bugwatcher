@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 
 export default function LoginModal({ onClose }) {
   const { loginUser } = useContext(AuthContext);
@@ -8,15 +9,22 @@ export default function LoginModal({ onClose }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const logged = loginUser(email, password);
-
-    if (!logged) {
-      setError("Email sau parolă incorectă.");
+    const res = await axios.post('http://localhost:3000/users/login', { 
+      email,  
+      password
+    },
+    { withCredentials: true }
+    );
+    
+    // console.log(res.data);
+    if (!res.data) {
+      setError("Email sau parolă incorecte.");
       return;
     }
+    loginUser(res.data);
 
     onClose();
   };

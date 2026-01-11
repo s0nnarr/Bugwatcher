@@ -1,5 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState } from "react";
+import axios from "axios";
+
 
 export const AuthContext = createContext();
 
@@ -13,27 +15,17 @@ export const AuthProvider = ({ children }) => {
     { email: "tst@mara.com", password: "1234", role: "TST" },
   ]);
 
-  // înregistrare user nou
-  const registerUser = (email, password, role) => {
-    const exists = users.some(u => u.email === email);
-    if (exists) return false;
 
-    const newUser = { email, password, role };
-    setUsers(prev => [...prev, newUser]);
-    return true;
-  };
-
-  // login
-  const loginUser = (email, password) => {
-    const found = users.find(u => u.email === email && u.password === password);
-    if (!found) return null;
-
-    setUser(found);
-    return found;
-  };
 
   // logout
-  const logoutUser = () => setUser(null);
+  const logoutUser = async () => {
+    await axios.post("http://localhost:3000/users/logout", {}, { withCredentials: true });
+    setUser(null);
+  };
+
+  const loginUser = (userData) => { // This holds the login state.
+    setUser(userData);
+  }
 
   return (
     <AuthContext.Provider
@@ -41,9 +33,7 @@ export const AuthProvider = ({ children }) => {
         user,
         users,
         setUser,
-        registerUser,
-        loginUser,
-        logoutUser,
+        loginUser
       }}
     >
       {children}

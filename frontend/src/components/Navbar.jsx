@@ -14,14 +14,14 @@ export default function Navbar() {
       <nav className="navbar">
         <h1 className="logo">BugWatcher</h1>
 
-        {!user && (
+        {!user ? (
           <div>
             <button onClick={() => setShowRegister(true)}>Register</button>
             <button onClick={() => setShowLogin(true)}>Login</button>
           </div>
-        )}
+        
 
-        {user && (
+        ) : (
           <div>
             <span>{user.email} ({user.role})</span>
             <button onClick={logoutUser}>Logout</button>
