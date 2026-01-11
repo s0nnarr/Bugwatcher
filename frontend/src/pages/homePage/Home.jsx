@@ -1,16 +1,17 @@
 import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
+import AddProjectModal from "../../components/AddProjectModal";
+import ProjectTable from "../../components/ProjectTable";
+import ProjectsListForTester from "../../components/ProjectsListForTester";
+import BugListForMP from "../../components/BugListForMP";
+import './home.css';
 
-import AddProjectModal from "../components/AddProjectModal";
-import ProjectTable from "../components/ProjectTable";
-import ProjectsListForTester from "../components/ProjectsListForTester";
-import BugListForMP from "../components/BugListForMP";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
   const [showAddProject, setShowAddProject] = useState(false);
 
-  // 🔹 User NEAUTENTIFICAT
+  //  User NEAUTENTIFICAT
   if (!user) {
     return (
       <div className="not-logged">
@@ -19,7 +20,7 @@ export default function Home() {
     );
   }
 
-  // 🔹 MP — Membru de proiect
+  // MP — Membru de proiect
   if (user.role === "MP") {
     return (
       <div className="mp-dashboard">
@@ -43,7 +44,7 @@ export default function Home() {
     );
   }
 
-  // 🔹 TST — Tester
+  // TST — Tester
   if (user.role === "TST") {
     return (
       <div className="tst-dashboard">
@@ -53,6 +54,6 @@ export default function Home() {
     );
   }
 
-  // fallback
+
   return null;
 }

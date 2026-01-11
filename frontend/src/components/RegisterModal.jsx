@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 
 export default function RegisterModal({ onClose }) {
   const { registerUser } = useContext(AuthContext);
@@ -9,18 +10,28 @@ export default function RegisterModal({ onClose }) {
   const [role, setRole] = useState("TST"); // default tester
   const [error, setError] = useState("");
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    try {
+      
+      const res = await axios.post("http://localhost:3000/users/register", {
+        email,
+        password,
+        role
+        
+      })
 
-    const success = registerUser(email, password, role);
+      if (!res.data.success) {
+        setError("Acest email este deja folosit.");
+        return;
+      }
 
-    if (!success) {
-      setError("Acest email este deja folosit.");
-      return;
+      alert("Cont creat cu succes! Acum te poți loga.");
+      onClose();
+    } catch (error) {
+      setError("A apărut o eroare la înregistrare.");
+    
     }
-
-    alert("Cont creat cu succes! Acum te poți loga.");
-    onClose();
   };
 
   return (

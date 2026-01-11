@@ -6,17 +6,26 @@ import userRouter from './routers/userRouter.js';
 import projectRouter from './routers/projectRouter.js';
 import teamRouter from './routers/teamRouter.js';
 import bugRouter from './routers/bugRouter.js';
+import { apiAudit } from './middleware/apiAudit.js';
+
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: 'http://localhost:5173',
+    credentials: true
 }));
+
+app.use(apiAudit);
+
+
+console.log(`Postgres pass: ${process.env.POSTGRES_PASS}`);
+console.log(`Postgres username: ${process.env.POSTGRES_USERNAME}`);
 
 
 
@@ -32,8 +41,12 @@ const sequelize = new Sequelize(
     logging: false
 });
 
-// console.log(`Postgres pass: ${process.env.POSTGRES_PASS}`);
-// console.log(`Postgres username: ${process.env.POSTGRES_USERNAME}`);
+// await sequelize.sync({ alter: true });
+
+console.log("Sequelize instance username:", sequelize.config.username);
+console.log("Database:", sequelize.config.database);
+console.log("Host:", sequelize.config.host);
+console.log("Port:", sequelize.config.port);
 
 
 const startServer = async () => {

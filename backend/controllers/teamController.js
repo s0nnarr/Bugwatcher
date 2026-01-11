@@ -48,7 +48,7 @@ export const createTeam = async (req, res) => {
 
 export const getAllTeams = async (req, res) => {
     try {
-        const teams =await Team.findAll({
+        const teams = await Team.findAll({
             include: [{
                 model: User,
                 attributes: ['id', 'email', 'role']
@@ -67,5 +67,4 @@ export const getAllTeams = async (req, res) => {
 
 /*
     TODO: Add more Team controllers (getTeamById, updateTeam, deleteTeam, etc...);
-
 */
