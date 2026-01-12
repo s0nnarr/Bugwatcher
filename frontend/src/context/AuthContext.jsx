@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 
 
 export const AuthContext = createContext();
@@ -15,8 +16,16 @@ export const AuthProvider = ({ children }) => {
     { email: "tst@mara.com", password: "1234", role: "TST" },
   ]);
 
-
-
+ 
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        const res = await axios.post("http://localhost:3000/users/me")
+      } catch (err) {
+        console.log("Error restoring session: ", err);
+      }
+    }
+  })
   // logout
   const logoutUser = async () => {
     await axios.post("http://localhost:3000/users/logout", {}, { withCredentials: true });

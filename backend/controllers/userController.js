@@ -252,5 +252,21 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+export const restoreUser = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id, { 
+      attributes: { exclude: ["password"] }
+    })
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.json(user);
 
+  } catch (err) {
+    return res.status(500).json({
+      message: "Internal server error.",
+      error: err.message
+    });
+  }
+}
 

@@ -7,7 +7,7 @@ import projectRouter from './routers/projectRouter.js';
 import teamRouter from './routers/teamRouter.js';
 import bugRouter from './routers/bugRouter.js';
 import { apiAudit } from './middleware/apiAudit.js';
-
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
 }));
-
+app.use(cookieParser());
 app.use(apiAudit);
 
 
