@@ -279,27 +279,44 @@ export const restoreUser = async (req, res) => {
 
 export const getUserProjects = async (req, res) => {
   try {
-    const { id, role } = req.user;
-    if (role === "MP") {
-      const user = await User.findByPk(id, {
-      include: {
-        model: Project,
-        as: 'projects',
-        through: { attributes: [] } // hide userProject table
-      }
+    const userID = req.user?.id;
+    console.log("Fetching projects for user ID:", userID);
+    if (!userID) {
+      return res.status(403).json({ message: "Unauthorized." });
+    }
+    const user = await User.findByPk(userID, {
+      attributes: { include: ["id", "email", "role"] },
     });
-
-      if (!user) {
-        return res.status(404).json({ message: "User not found." });
-      }
-      return res.status(200).json(user.projects);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
     
-    if (role === "TST") {
-      const projects = await Project.findAll();
-      return res.status(200).json(projects); // all testable projects
+    if (user.role === "MP") {
+      const userWithProjects = await User.findByPk(userID, {
+        include: [{
+          model: Project,
+          as: 'Projects',
+          through: { attributes: [] },
+        }],
+        attributes: { exclude: ["password"] }
+      });
+      console.log("userWithProjects.Projects:", userWithProjects.Projects);
+      console.log("userWithProjects: ", userWithProjects);
+      return res.status(200).json({ Projects: userWithProjects });
+    }
+    else if (user.role === "TST") {
+      projects = await Project.findAll({
+        include: [{
+          model: User,
+          as: "Owner",
+          attributes: ["id", "email", "role"]
+        }]
+      }
+      );
+      return res.status(200).json({ Projects: projects });
     } else {
-      return res.status(403).json({ message: "Unauthorized role." });
+      return res.status(400).json({ message: "Invalid user role." });
     }
 
   } catch (err) {

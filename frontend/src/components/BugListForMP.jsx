@@ -6,8 +6,9 @@ export default function BugListForMP() {
   const { projects, bugs, assignBug, resolveBug } = useContext(AppContext);
   const { user } = useContext(AuthContext);
 
+  const projectList = projects.Projects;
   // proiectele unde acest MP este owner
-  const ownedProjects = projects.filter(p => p.owner === user.email);
+  const ownedProjects = projectList.filter(p => p.owner === user.email);
   const ownedProjectIds = ownedProjects.map(p => p.id);
 
   // bug-urile lor

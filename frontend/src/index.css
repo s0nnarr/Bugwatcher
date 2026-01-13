@@ -206,27 +206,67 @@ h3 {
   overflow: hidden;
   box-shadow: var(--shadow);
   margin-top: 28px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* 👈 creates horizontal spacing between rows */
+}
+
+/* Header */
+.project-table thead tr,
+.bug-table thead tr {
+  background: var(--primary);
 }
 
 .project-table th,
 .bug-table th {
-  background: var(--primary);
   color: white;
-  padding: 16px;
+  padding: 14px 18px;
   text-align: left;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.project-table tbody tr,
+.bug-table tbody tr {
+  background: var(--bg);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .project-table td,
 .bug-table td {
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
+  padding: 16px 18px;
   font-size: 14.5px;
+  border: none;
 }
 
-.bug-table tr:hover {
+.project-table tbody tr td:first-child,
+.bug-table tbody tr td:first-child {
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+}
+
+.project-table tbody tr td:last-child,
+.bug-table tbody tr td:last-child {
+  border-top-right-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+.project-table tbody tr:hover,
+.bug-table tbody tr:hover {
   background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.project-table a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.project-table a:hover {
+  text-decoration: underline;
 }
 
 /* =========================================================
