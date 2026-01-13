@@ -1,16 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
+import { useEffect } from "react";
 import { createContext, useState } from "react";
+import axios from "axios";
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // 🔵 Toate proiectele
   const [projects, setProjects] = useState([]);
-
-  // 🔵 Toate bug-urile
+  const [loading, setLoading] = useState(true);
   const [bugs, setBugs] = useState([]);
 
-  // 🔹 MP ➜ adaugă proiect
   const addProject = (project) => {
     setProjects((prev) => [
       ...prev,
@@ -26,7 +25,35 @@ export const AppProvider = ({ children }) => {
     ]);
   };
 
-  // 🔹 TST ➜ se alătură proiectului
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      console.log("Attempting to fetch projects...");
+      const res = await axios.get(
+        "http://localhost:3000/users/getUserProjects",
+        { withCredentials: true }
+      );
+     
+      if (res.status !== 200) {
+        console.error("Failed to fetch projects");
+        setLoading(false);
+        return;
+      }
+      console.log("Projects fetched:", res.data.Projects);
+      setProjects(res.data.Projects);
+      } catch (err) {
+        setProjects([]);
+        console.error("Error fetching projects:", err);
+      } finally {
+        setLoading(false);
+      }
+    
+  }
+
+  useEffect(() => {
+    fetchProjects();
+  }, [])
+
   const addTesterToProject = (projectId, testerEmail) => {
     setProjects((prev) =>
       prev.map((p) =>
@@ -90,12 +117,13 @@ export const AppProvider = ({ children }) => {
       value={{
         projects,
         bugs,
-
         addProject,
         addTesterToProject,
         addBug,
         assignBug,
-        resolveBug
+        resolveBug,
+        fetchProjects,
+        loading,
       }}
     >
       {children}

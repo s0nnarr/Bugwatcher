@@ -20,9 +20,11 @@ export default function AddProjectModal({ onClose }) {
     const res = await axios.post("http://localhost:3000/projects", {
         title: name,
         commit_link: repo
-      }
+      },
+      { withCredentials: true }
     )
 
+    console.log(res);
     if (!res.data) {
       alert("A apărut o eroare la crearea proiectului.");
       return;

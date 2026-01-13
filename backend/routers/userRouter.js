@@ -1,7 +1,7 @@
 /* */
 
 import express from 'express';
-import { createUser, getUsers, getUserById, updateUser,deleteUser, loginUser, registerUser, restoreUser, logoutUser } from "../controllers/userController.js";
+import { createUser, getUsers, getUserById, updateUser,deleteUser, loginUser, registerUser, restoreUser, logoutUser, getUserProjects } from "../controllers/userController.js";
 // import verifyAccessToken from '../middleware/authMiddleware.js';
 import { verifyAccessToken } from '../middleware/verifyToken.js';
 const router = express.Router();
@@ -13,6 +13,7 @@ router.delete("/:id", deleteUser);
 router.post("/login", loginUser);
 router.post("/register", registerUser);
 router.get("/me", verifyAccessToken, restoreUser);
+router.get("/getUserProjects", verifyAccessToken, getUserProjects);
 router.get("/:id", getUserById);
 router.post("/logout", verifyAccessToken, logoutUser);
 

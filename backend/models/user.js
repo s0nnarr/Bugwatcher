@@ -8,6 +8,7 @@ export default (sequelize, DataTypes) => {
     static associate(models) {
       this.belongsToMany(models.Project, {
         through: models.UserProject,
+        as: "Projects",
         foreignKey: 'userId',
         otherKey: 'projectId'
       })

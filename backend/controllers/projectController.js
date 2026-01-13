@@ -20,17 +20,25 @@ export const createProject = async (req, res) => {
      
     try {
         const { title, commit_link } = req.body;
-
+        const id = req.user.id;
+        
+        if (!title || title.trim() === "") {
+            return res.status(400).json({ message: "Project title is required." });
+        }
+        if (!id) {
+            return res.status(403).json({ message: "Forbidden." });
+        }
         // const user = req.user;
-        const id = 1; // Temporary until auth is done
         const userExists = await User.findByPk(id);
         if (!userExists) {
             return res.status(404).json({ message: "User not found." });
         }
+
+        if (userExists.role === "TST") {
+            return res.status(403).json({ message: "Unauthorized. Tester roles cannot create projects." });
+        }
         const team = await userExists.getTeam();
         let ownerId, ownerType;
-        
-
 
         try {
             if (!commit_link || commit_link.trim() === "" || !(commit_link.startsWith("https://"))) {
@@ -63,6 +71,8 @@ export const createProject = async (req, res) => {
             owner_type: ownerType,
             owner_id: ownerId
         });
+        await newProject.addUser(userExists);
+        await userExists.addProject(newProject);
         let projectOwner;
         if (newProject.owner_type === "USER") {
             projectOwner = await User.findByPk(newProject.owner_id, {
