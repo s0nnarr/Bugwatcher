@@ -7,11 +7,11 @@ import { AuthProvider } from "./context/AuthContext";
 import { AppProvider } from "./context/AppContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode> // StrictMode cauzeaza dublarea requesturilor, e enervant si incetineste multe chestii 
     <AuthProvider>
       <AppProvider>
         <App />
       </AppProvider>
     </AuthProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

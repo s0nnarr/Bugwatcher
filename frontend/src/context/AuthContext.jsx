@@ -20,12 +20,18 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        const res = await axios.post("http://localhost:3000/users/me")
+        const res = await axios.get("http://localhost:3000/users/me", {
+          withCredentials: true
+        });
+        setUser(res.data);
+
       } catch (err) {
         console.log("Error restoring session: ", err);
       }
     }
-  })
+    restoreSession();
+  }, []);
+
   // logout
   const logoutUser = async () => {
     await axios.post("http://localhost:3000/users/logout", {}, { withCredentials: true });
@@ -42,7 +48,8 @@ export const AuthProvider = ({ children }) => {
         user,
         users,
         setUser,
-        loginUser
+        loginUser,
+        logoutUser
       }}
     >
       {children}

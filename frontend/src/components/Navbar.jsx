@@ -12,7 +12,7 @@ export default function Navbar() {
   return (
     <>
       <nav className="navbar">
-        <h1 className="logo">BugWatcher</h1>
+        <h1 className="logo">&lt;bugwatcher&gt;</h1>
 
         {!user ? (
           <div>
