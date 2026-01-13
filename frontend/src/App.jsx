@@ -1,4 +1,5 @@
 import Navbar from "./components/Navbar";
+import { ProjectPage } from "./pages/projectPage/ProjectPage";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
 import Home from "./pages/homePage/Home";
@@ -14,6 +15,7 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/projects/:id" element={<ProjectPage />} />
         </Routes>
         </AppProvider>
       </AuthProvider>

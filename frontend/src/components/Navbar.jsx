@@ -2,17 +2,22 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const { user, logoutUser } = useContext(AuthContext);
 
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/");
+  }
 
   return (
     <>
       <nav className="navbar">
-        <h1 className="logo">&lt;bugwatcher&gt;</h1>
+        <h1 className="logo" onClick={() => handleClick()}>&lt;bugwatcher&gt;</h1>
 
         {!user ? (
           <div>

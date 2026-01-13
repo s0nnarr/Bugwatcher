@@ -1,0 +1,73 @@
+.project-page-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--text);
+}
+
+.project-header {
+  background: var(--bg-alt);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+.project-header h1 {
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: 28px;
+}
+
+.project-header p {
+  margin: 4px 0;
+  color: var(--text-light);
+  font-size: 15px;
+}
+
+.bug-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* adds card-like spacing */
+  margin-top: 16px;
+}
+
+.bug-table th,
+.bug-table td {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 14.5px;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  border-radius: var(--radius);
+}
+
+.bug-table th {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bug-table tbody tr:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.bug-table a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.bug-table a:hover {
+  text-decoration: underline;
+}
