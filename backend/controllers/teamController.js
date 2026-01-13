@@ -2,6 +2,13 @@ import db from '../models/index.js';
 
 const { Team, User } = db;
 
+/**
+ * Creează o echipă nouă
+ * @route POST /teams
+ * @param {Object} req.body - {name, description}
+ * @returns {Object} echipa creată
+ */
+
 export const createTeam = async (req, res) => {
     try {
         const { name, description } = req.body;
@@ -45,6 +52,12 @@ export const createTeam = async (req, res) => {
         });
     }
 }
+
+/**
+ * Ia toate echipele
+ * @route GET /teams
+ * @returns {Object[]} lista de echipe
+ */
 
 export const getAllTeams = async (req, res) => {
     try {

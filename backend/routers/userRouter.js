@@ -17,5 +17,4 @@ router.get("/:id", getUserById);
 router.post("/logout", verifyAccessToken, logoutUser);
 
 
-
 export default router;

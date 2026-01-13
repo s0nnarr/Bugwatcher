@@ -6,6 +6,13 @@ import { accessOptions } from "../utils/cookiesConfig.js";
 
 const { User, Project } = db;
 
+/**
+ * Creează un user nou
+ * @route POST /users
+ * @param {Object} req.body - {email, password, role}
+ * @returns {Object} user creat
+ */
+
 export const createUser = async (req, res) => {
   try {
     const { email, password, role } = req.body;
@@ -48,6 +55,13 @@ export const createUser = async (req, res) => {
   }
 };
 
+
+/**
+ * Ia toți userii
+ * @route GET /users
+ * @returns {Object[]} lista de useri
+ */
+
 export const getUsers = async (req, res) => {
   try {
     const users = await User.findAll({
@@ -63,6 +77,13 @@ export const getUsers = async (req, res) => {
   }
 };
 
+
+/**
+ * Înregistrează un user (signup)
+ * @route POST /users/register
+ * @param {Object} req.body - {email, password, role}
+ * @returns {Object} user creat
+ */
 
 export const registerUser = async (req, res) => {
   try {
@@ -115,6 +136,13 @@ export const registerUser = async (req, res) => {
 
 }
 
+   /**
+   * Loghează un user (login)
+   * @route POST /users/login
+   * @param {Object} req.body - {email, password}
+   * @returns {Object} user logat
+   */
+
   export const loginUser = async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -163,6 +191,13 @@ export const registerUser = async (req, res) => {
 
   }
 
+  /**
+  * Ia un user după ID
+  * @route GET /users/:id
+  * @param {string} id - ID-ul userului
+  * @returns {Object} userul găsit
+  */
+
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -184,6 +219,14 @@ export const getUserById = async (req, res) => {
     });
   }
 };
+
+  /**
+  * Actualizează un user după ID
+  * @route PUT /users/:id
+  * @param {string} id - ID-ul userului
+  * @param {Object} req.body - {email, role}
+  * @returns {Object} user actualizat
+  */
 
 export const updateUser = async (req, res) => {
   try {
@@ -223,6 +266,11 @@ export const updateUser = async (req, res) => {
   }
 };
 
+/**
+ * Loghează un user (logout)
+ * @route POST /users/logout
+ * @returns {Object} mesaj de succes
+ */
 export const logoutUser = async (req, res) => {
   try {
     res.clearCookie("accessToken");
@@ -232,6 +280,13 @@ export const logoutUser = async (req, res) => {
     return res.status(500).json({ message: "Internal Server error", error: err });
   }
 }
+
+/**
+ * Șterge un user după ID
+ * @route DELETE /users/:id
+ * @param {string} id - ID-ul userului
+ * @returns {void} fara continut(204 No Content)
+ */
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -251,6 +306,12 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
+/**
+ * Recuperează datele userului logat
+ * @route GET /users/me
+ * @returns {Object} datele userului logat
+ */
 
 export const restoreUser = async (req, res) => {
   try {
@@ -277,6 +338,11 @@ export const restoreUser = async (req, res) => {
   }
 }
 
+/**
+ * Ia proiectele unui user
+ * @route GET /users/projects
+ * @returns {Object[]} lista de proiecte
+ */
 export const getUserProjects = async (req, res) => {
   try {
     const userId = req.user.id;

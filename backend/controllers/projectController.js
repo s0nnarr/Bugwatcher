@@ -5,6 +5,12 @@ import axios from "axios";
 
 const { Project, User, Team, Bug } = db;
 
+/**
+ * Creează un proiect nou
+ * @route POST /projects
+ * @param {Object} req.body - {title, commit_link}
+ * @returns {Object} un obiect care contine mesajul de succes, proiectul creat și owner-ul proiectului
+ */
 
 export const createProject = async (req, res) => {
    
@@ -79,6 +85,12 @@ export const createProject = async (req, res) => {
         });
     }
 }
+
+/**
+ * Ia toate proiectele
+ * @route GET /projects
+ * @returns {Object[]} lista de proiecte
+ */
 
 export const getAllProjects = async (req, res) => {
     try {

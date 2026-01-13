@@ -2,6 +2,13 @@ import db from "../models/index.js";
 
 const { Bug, User, Project } = db;
 
+/**
+ * Creează un bug nou
+ * @route POST /bugs
+ * @param {Object} req.body - {title, description, severity, priority, projectId, assignedUserId}
+ * @returns {Object} bug creat
+ */
+
 export const createBug = async (req, res) => {
 
     try {
@@ -22,6 +29,8 @@ export const createBug = async (req, res) => {
             }
         }
         let status = "OPEN";
+        
+        // Create bug
         const newBug = await Bug.create({
             title,
             description,
@@ -42,6 +51,12 @@ export const createBug = async (req, res) => {
     }
 }
 
+/**
+ * Obține toate bug-urile unui proiect
+ * @route GET /bugs/project/:projectId
+ * @param {string} projectId - ID-ul proiectului
+ * @returns {Object[]} lista de bug-uri asociate proiectului
+ */
 export const getBugsByProjectId = async (req, res) => {
     try {
         const { projectId } = req.params; 
@@ -71,6 +86,13 @@ export const getBugsByProjectId = async (req, res) => {
     }
 };
 
+/**
+ * Actualizează un bug existent
+ * @route PUT /bugs/:id
+ * @param {string} id - ID-ul bug-ului de actualizat
+ * @param {Object} req.body - {title, description, severity, priority, status, assignedUserId}
+ * @returns {Object} bug actualizat
+ */
 export const updateBug = async (req, res) => {
     try {
         const { id } = req.params;
@@ -103,7 +125,12 @@ export const updateBug = async (req, res) => {
     }
 };
 
-
+/**
+ * Șterge un bug
+ * @route DELETE /bugs/:id
+ * @param {string} id - ID-ul bug-ului de șters
+ * @returns {Object} mesaj de succes
+ */
 export const deleteBug = async (req, res) => {
     try {
         const { id } = req.params;
@@ -121,11 +148,3 @@ export const deleteBug = async (req, res) => {
 };
 
 
-
-
-// TODO :
-/* CONTROLERE:
-- getBugsByProjectId
-- updateBug
-- deleteBug
-*/
