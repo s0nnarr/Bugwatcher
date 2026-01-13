@@ -113,3 +113,39 @@ export const getAllProjects = async (req, res) => {
         });
     }
 }
+
+/**
+ * Ia un proiect după ID
+ * @route GET /projects/:id
+ * @returns {Object} proiectul, populat cu Users si Bugs.
+ */
+
+
+export const getProjectById = async (req, res) => {
+    try {   
+        const { id } = req.params;
+        const project = await Project.findByPk(id, {
+            include: [
+                {
+                    model: User,
+                    as: "Users",
+                    attributes: { exclude: ["password"] },
+                    through: { attributes: [] }
+                },
+                {
+                    model: Bug,
+                    as: "bugs"  
+                }
+            ]
+        })
+        if (!project) {
+            return res.status(404).json({ message: "Project not found." });
+        }
+        return res.status(200).json(project);
+    } catch (err) {
+        return res.status(500).json({
+            message: "Internal server error.",
+            error: err.message
+        });
+    }
+}

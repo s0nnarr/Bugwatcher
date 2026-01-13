@@ -269,6 +269,10 @@ h3 {
   text-decoration: underline;
 }
 
+.project-card:hover {
+  cursor: pointer;
+}
+
 /* =========================================================
    MODALE — PREMIUM LOOK
    ========================================================= */

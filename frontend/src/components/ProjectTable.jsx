@@ -1,11 +1,15 @@
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function ProjectTable() {
   const { projects, bugs, loading } = useContext(AppContext);
   const navigate = useNavigate();
-  const projectList = projects.Projects || [];
+  let projectList = projects.Projects || [];
+  
+
+  
   console.log("ProjectTable projects from context:", projectList);
   if (projectList.length === 0) {
     return <p>Nu exista proiecte inregistrate.</p>;
@@ -15,11 +19,13 @@ export default function ProjectTable() {
   const getBugCountForProject = (projectId) =>
     bugs.filter((b) => b.projectId === projectId).length;
 
-  const handleClick = () => {
-    navigate('/test')
+  const handleProjectClick = (pid) => {
+    navigate(`/projects/${pid}`)
   }
 
+
   return (
+ 
     <table className="project-table">
       <thead>
         <tr>
@@ -32,7 +38,7 @@ export default function ProjectTable() {
       </thead>
       <tbody>
         {projectList.map((p) => (
-          <tr key={p.id} >
+          <tr key={p.id} onClick={() => handleProjectClick(p.id)} className="project-card">
             <td>{p.title}</td>
             <td>
               <a href={p.commit_link} target="_blank" rel="noreferrer">

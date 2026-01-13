@@ -3,9 +3,14 @@ import { AppContext } from "../context/AppContext";
 import { AuthContext } from "../context/AuthContext";
 
 export default function BugListForMP() {
-  const { projects, bugs, assignBug, resolveBug } = useContext(AppContext);
+  const { projects, bugs, assignBug, resolveBug, loading } = useContext(AppContext);
   const { user } = useContext(AuthContext);
 
+  while (loading) {
+    return (
+      <div>Se încarcă bug-urile... </div>
+    )
+  }
   const projectList = projects.Projects;
   // proiectele unde acest MP este owner
   const ownedProjects = projectList.filter(p => p.owner === user.email);
