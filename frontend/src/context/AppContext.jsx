@@ -1,13 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
+import { useEffect } from "react";
 import { createContext, useState } from "react";
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // 🔵 Toate proiectele
   const [projects, setProjects] = useState([]);
-
-  // 🔵 Toate bug-urile
+  const [loading, setLoading] = useState(true);
   const [bugs, setBugs] = useState([]);
 
   // 🔹 MP ➜ adaugă proiect
@@ -25,6 +24,23 @@ export const AppProvider = ({ children }) => {
       }
     ]);
   };
+
+  const fetchProjects = async () => {
+    setLoading(true);
+
+    const res = await axios.get("http://localhost:3000/projects/getUserProjects");
+    if (res.status !== 200) {
+      console.error("Failed to fetch projects");
+      setLoading(false);
+      return;
+    }
+    setProjects(res.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchProjects();
+  }, [])
 
   // 🔹 TST ➜ se alătură proiectului
   const addTesterToProject = (projectId, testerEmail) => {

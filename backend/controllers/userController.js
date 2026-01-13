@@ -279,19 +279,28 @@ export const restoreUser = async (req, res) => {
 
 export const getUserProjects = async (req, res) => {
   try {
-    const userId = req.user.id;
-
-    const user = await User.findByPk(userId, {
+    const { id, role } = req.user;
+    if (role === "MP") {
+      const user = await User.findByPk(id, {
       include: {
         model: Project,
         as: 'projects',
         through: { attributes: [] } // hide userProject table
       }
     });
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+      return res.status(200).json(user.projects);
     }
-    return res.status(200).json(user.projects);
+    
+    if (role === "TST") {
+      const projects = await Project.findAll();
+      return res.status(200).json(projects); // all testable projects
+    } else {
+      return res.status(403).json({ message: "Unauthorized role." });
+    }
 
   } catch (err) {
     res.status(500).json({
