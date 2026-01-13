@@ -3,7 +3,7 @@
    ========================================================= */
 
 :root {
-  --primary: #2563eb;
+  --primary: #000000;
   --primary-hover: #1d4ed8;
   --primary-light: #e0eaff;
 
@@ -64,6 +64,7 @@ body {
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
+  text-decoration: none;
 }
 
 .navbar button {

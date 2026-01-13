@@ -4,7 +4,7 @@ import zxcvbn from 'zxcvbn';
 import createAccessToken from "../utils/createAccessToken.js";
 import { accessOptions } from "../utils/cookiesConfig.js";
 
-const { User } = db;
+const { User, Project } = db;
 
 export const createUser = async (req, res) => {
   try {
@@ -225,7 +225,7 @@ export const updateUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
-    res.clearCookie("accessToken", accessOptions);
+    res.clearCookie("accessToken");
     return res.status(200).json({ message: "Logged out successfully." });
 
   } catch (err) {
@@ -252,5 +252,52 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+export const restoreUser = async (req, res) => {
+  try {
+    const id = req.user.id;
+    if (!id) {
+    
+      return res.status(400).json({ message: "User ID missing in token." });
+    
+    };
 
+    const user = await User.findByPk(id, { 
+      attributes: { exclude: ["password"] }
+    })
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.json(user);
+
+  } catch (err) {
+    return res.status(500).json({
+      message: "Internal server error.",
+      error: err.message
+    });
+  }
+}
+
+export const getUserProjects = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findByPk(userId, {
+      include: {
+        model: Project,
+        as: 'projects',
+        through: { attributes: [] } // hide userProject table
+      }
+    });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    return res.status(200).json(user.projects);
+
+  } catch (err) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: err.message
+    });
+  }
+};
 

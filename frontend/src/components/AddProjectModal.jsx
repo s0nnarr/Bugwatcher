@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { AuthContext } from "../context/AuthContext";
+import axios from 'axios';
 
 export default function AddProjectModal({ onClose }) {
   const { addProject } = useContext(AppContext);
@@ -10,17 +11,22 @@ export default function AddProjectModal({ onClose }) {
   const [repo, setRepo] = useState("");
   const [teamInput, setTeamInput] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const team = teamInput.split(",").map(t => t.trim());
+    // const team = teamInput.split(",").map(t => t.trim());
+    // const team = req.user.team
+    
+    const res = await axios.post("http://localhost:3000/projects", {
+        title: name,
+        commit_link: repo
+      }
+    )
 
-    addProject({
-      name,
-      repo,
-      owner: user.email,
-      team
-    });
+    if (!res.data) {
+      alert("A apărut o eroare la crearea proiectului.");
+      return;
+    }
 
     onClose();
   };
@@ -40,7 +46,7 @@ export default function AddProjectModal({ onClose }) {
             required
           />
 
-          <label>Repository URL</label>
+          <label>Commit URL</label>
           <input
             type="text"
             value={repo}
@@ -48,14 +54,14 @@ export default function AddProjectModal({ onClose }) {
             required
           />
 
-          <label>Echipa (separate prin virgulă)</label>
+          {/* <label>Echipa (separate prin virgulă)</label>
           <input
             type="text"
             value={teamInput}
             onChange={(e) => setTeamInput(e.target.value)}
             placeholder="ex: Mara, Andrei, Ioana"
             required
-          />
+          /> */}
 
           <div className="modal-buttons">
     <button onClick={handleSubmit}>Salvează proiect</button>

@@ -13,7 +13,7 @@ export const createProject = async (req, res) => {
     // If yes, set owner_type to TEAM and owner_id to the user's team.
      
     try {
-        const { title, description, commit_link } = req.body;
+        const { title, commit_link } = req.body;
 
         // const user = req.user;
         const id = 1; // Temporary until auth is done
@@ -53,7 +53,6 @@ export const createProject = async (req, res) => {
 
         const newProject = await Project.create({
             title,
-            description,
             commit_link,
             owner_type: ownerType,
             owner_id: ownerId
@@ -79,5 +78,16 @@ export const createProject = async (req, res) => {
             error: err.message
         });
     }
+}
 
+export const getAllProjects = async (req, res) => {
+    try {
+        const projects = await Project.findAll();
+        return res.status(200).json(projects);
+    } catch (err) {
+        return res.status(500).json({
+            message: "Internal server error.",
+            error: err.message
+        });
+    }
 }
