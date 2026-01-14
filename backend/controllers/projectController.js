@@ -6,6 +6,41 @@ import axios from "axios";
 const { Project, User, Team, Bug } = db;
 
 /**
+ * Un tester (TST) se alătură unui proiect
+ * @route POST /projects/:id/join
+ */
+export const joinProject = async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        const userId = req.user?.id;
+
+        if (!userId) return res.status(403).json({ message: "Unauthorized." });
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        const project = await Project.findByPk(projectId);
+        if (!project) return res.status(404).json({ message: "Project not found." });
+
+        // Only TST users should use this endpoint to join as testers
+        if (user.role !== "TST") {
+            return res.status(403).json({ message: "Only tester (TST) users can join projects as testers." });
+        }
+
+        // Check membership
+        const alreadyMember = await project.hasUser(user);
+        if (alreadyMember) {
+            return res.status(200).json({ message: "User already member of the project." });
+        }
+
+        await project.addUser(user);
+        return res.status(200).json({ message: "Joined project successfully." });
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error.", error: err.message });
+    }
+}
+
+/**
  * Creează un proiect nou
  * @route POST /projects
  * @param {Object} req.body - {title, commit_link}
@@ -141,7 +176,20 @@ export const getProjectById = async (req, res) => {
         if (!project) {
             return res.status(404).json({ message: "Project not found." });
         }
-        return res.status(200).json(project);
+        // Resolve owner (USER or TEAM) and attach as Owner for frontend convenience
+        let projectJson = project.toJSON ? project.toJSON() : project;
+        let projectOwner = null;
+        try {
+          if (projectJson.owner_type === 'USER') {
+            projectOwner = await User.findByPk(projectJson.owner_id, { attributes: ['id', 'email', 'role'] });
+          } else if (projectJson.owner_type === 'TEAM') {
+            projectOwner = await Team.findByPk(projectJson.owner_id);
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        return res.status(200).json({ ...projectJson, Owner: projectOwner });
     } catch (err) {
         return res.status(500).json({
             message: "Internal server error.",

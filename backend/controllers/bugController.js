@@ -13,15 +13,30 @@ export const createBug = async (req, res) => {
 
     try {
         const { title, description, severity, priority, projectId, assignedUserId } = req.body;
-        // assignedUserId = ID-ul userului care a postat bug-ul
-        if (!title || title.trim() === "" || !projectId || !assignedUserId || !severity || !priority) {
+        const requesterId = req.user?.id;
+
+        if (!requesterId) return res.status(403).json({ message: "Unauthorized." });
+
+        // required fields
+        if (!title || title.trim() === "" || !projectId || !severity || !priority) {
             return res.status(400).json({ message: "Missing information in req.body" });
         }
-      
+
         const project = await Project.findByPk(projectId);
         if (!project) {
             return res.status(404).json({ message: "Project not found." });
         }
+        const requester = await User.findByPk(requesterId);
+        if (!requester) return res.status(404).json({ message: "Requesting user not found." });
+
+        // If requester is a tester, ensure they have joined the project
+        if (requester.role === "TST") {
+            const isMember = await project.hasUser(requester);
+            if (!isMember) {
+                return res.status(403).json({ message: "Tester must join project before reporting bugs." });
+            }
+        }
+
         if (assignedUserId) {
             const assignedUser = await User.findByPk(assignedUserId);
             if (!assignedUser) {
@@ -30,7 +45,7 @@ export const createBug = async (req, res) => {
         }
         let status = "OPEN";
         
-        // Create bug
+        // Create bug (persist reporterId)
         const newBug = await Bug.create({
             title,
             description,
@@ -38,7 +53,8 @@ export const createBug = async (req, res) => {
             priority,
             status,
             projectId,
-            assignedUserId
+            assignedUserId: assignedUserId || null,
+            reporterId: requesterId
         });
 
         return res.status(201).json(newBug);
@@ -65,7 +81,6 @@ export const getBugsByProjectId = async (req, res) => {
         if (!project) {
             return res.status(404).json({ message: "Project not found." });
         }
-
         const bugs = await Bug.findAll({
             where: { projectId: projectId },
             include: [
@@ -73,6 +88,11 @@ export const getBugsByProjectId = async (req, res) => {
                     model: User,
                     as: 'assignedUser', 
                     attributes: ['id', 'email', 'role'] 
+                },
+                {
+                    model: User,
+                    as: 'reporter',
+                    attributes: ['id', 'email', 'role']
                 }
             ]
         });
@@ -142,6 +162,38 @@ export const deleteBug = async (req, res) => {
 
         await bug.destroy();
         return res.status(200).json({ message: "Bug deleted successfully." });
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error.", error: err.message });
+    }
+};
+
+/**
+ * Obține un bug după ID
+ * @route GET /bugs/:id
+ * @param {string} id - ID-ul bug-ului
+ * @returns {Object} bug-ul găsit, cu reporter și assignedUser incluse
+ */
+export const getBugById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const bug = await Bug.findByPk(id, {
+            include: [
+                {
+                    model: User,
+                    as: 'assignedUser',
+                    attributes: ['id', 'email', 'role']
+                },
+                {
+                    model: User,
+                    as: 'reporter',
+                    attributes: ['id', 'email', 'role']
+                }
+            ]
+        });
+        if (!bug) {
+            return res.status(404).json({ message: "Bug not found." });
+        }
+        return res.status(200).json(bug);
     } catch (err) {
         return res.status(500).json({ message: "Internal server error.", error: err.message });
     }

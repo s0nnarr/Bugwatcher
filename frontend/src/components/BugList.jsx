@@ -9,34 +9,41 @@ export default function BugList({ project, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>Bug-uri pentru {project.name}</h2>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+          <h2 style={{fontSize:18}}>Bug-uri — {project.name || project.title}</h2>
+          <button className="btn ghost" onClick={onClose}>Închide</button>
+        </div>
 
-        <button className="close-btn" onClick={onClose}>X</button>
-
-        {projectBugs.length === 0 && <p>Nu exista bug-uri pentru acest proiect.</p>}
+        {projectBugs.length === 0 && <p className="muted">Nu exista bug-uri pentru acest proiect.</p>}
 
         {projectBugs.map(bug => (
-          <div key={bug.id} className="bug-item">
-            <p><b>Descriere:</b> {bug.description}</p>
-            <p><b>Prioritate:</b> {bug.priority}</p>
-            <p><b>Severitate:</b> {bug.severity}</p>
-            <p><b>Status:</b> {bug.status}</p>
+          <div key={bug.id} className="bug-item" style={{padding:'12px 0', borderBottom:'1px solid rgba(255,255,255,0.03)'}}>
+            <div style={{display:'flex', justifyContent:'space-between', gap:12}}>
+              <div>
+                <div style={{fontWeight:700, marginBottom:6}}>{bug.title || 'Untitled'}</div>
+                <div className="muted">Reporter: {bug.reporter?.email || '—'}</div>
+              </div>
+              <div style={{textAlign:'right'}}>
+                <div className="muted">Status: {bug.status}</div>
+                <div className="muted">Priority: {bug.priority}</div>
+              </div>
+            </div>
 
-            {!bug.assignedTo && (
-              <button onClick={() => assignBug(bug.id, "MP")}>
-                Aloca mie
-              </button>
-            )}
+            <p style={{marginTop:10}}>{bug.description}</p>
 
-            {bug.assignedTo && bug.status !== "Resolved" && (
-              <button
-                onClick={() =>
-                  resolveBug(bug.id, prompt("Link commit rezolvare:"))
-                }
-              >
-                Marcheaza rezolvat
-              </button>
-            )}
+            <div style={{display:'flex', gap:8, marginTop:10}}>
+              {!bug.assignedUser && (
+                <button className="btn primary" onClick={() => assignBug(bug.id, /* placeholder */ null)}>
+                  Aloca mie
+                </button>
+              )}
+
+              {bug.assignedUser && bug.status !== "RESOLVED" && (
+                <button className="btn" onClick={() => resolveBug(bug.id, prompt("Link commit rezolvare:"))}>
+                  Marcheaza rezolvat
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

@@ -6,12 +6,9 @@ import { useState } from "react";
 export default function ProjectTable() {
   const { projects, bugs, loading } = useContext(AppContext);
   const navigate = useNavigate();
-  let projectList = projects.Projects || [];
   
 
-  
-  console.log("ProjectTable projects from context:", projectList);
-  if (projectList.length === 0) {
+  if (projects.length === 0) {
     return <p>Nu exista proiecte inregistrate.</p>;
   }
   console.log("Rendering ProjectTable with projects:", projects);
@@ -37,7 +34,7 @@ export default function ProjectTable() {
         </tr>
       </thead>
       <tbody>
-        {projectList.map((p) => (
+        {projects.map((p) => (
           <tr key={p.id} onClick={() => handleProjectClick(p.id)} className="project-card">
             <td>{p.title}</td>
             <td>

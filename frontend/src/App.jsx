@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar";
 import { ProjectPage } from "./pages/projectPage/ProjectPage";
+import { BugPage } from "./pages/bugPage/BugPage";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
 import Home from "./pages/homePage/Home";
@@ -16,6 +17,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects/:id" element={<ProjectPage />} />
+          <Route path="/bugs/:id" element={<BugPage />} />
         </Routes>
         </AppProvider>
       </AuthProvider>

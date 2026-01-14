@@ -1,16 +1,19 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 import './projectPage.css';
+import { AppContext } from "../../context/AppContext";
 
 export const ProjectPage = () => {
     const { id } = useParams();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [bugs, setBugs] = useState([]);
-    
+    const { bugs } = useContext(AppContext);
+
+    // Filter bugs for current project
+    const projectBugs = bugs.filter(b => String(b.projectId) === String(id));
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -24,9 +27,6 @@ export const ProjectPage = () => {
                     return;
                 }
                 setProject(res.data);
-                if (res.data.owner_type === "USER") {
-                  const owner = await axios.get(`http://localhost:3000/users/${res.data.owner_id}`, { withCredentials: true });
-                }
             } catch (error) {
                 console.error("Error fetching project:", error);
             } finally {
@@ -49,7 +49,7 @@ export const ProjectPage = () => {
         <h1>{project.title}</h1>
         <p>{project.description || "Fără descriere..."}</p>
         <p>
-          <strong>Owner: </strong> {project.email || "—"}
+          <strong>Owner: </strong> {project.Owner?.email || project.Owner?.name || "—"}
         </p>
         <p>
           <strong>Repository: </strong>{" "}
@@ -58,20 +58,20 @@ export const ProjectPage = () => {
           </a>
         </p>
         <p>
-          <strong>Echipă:</strong> {project.team?.map((m) => m.email).join(", ") || "—"}
+          <strong>Echipă:</strong> {project.Users?.map((m) => m.email).join(", ") || "—"}
         </p>
       </header>
 
       <section className="project-bugs">
-        <h2>Bug-uri ({bugs.length})</h2>
-        {bugs.length === 0 ? (
+        <h2>Bug-uri ({projectBugs.length})</h2>
+        {projectBugs.length === 0 ? (
           <p>Nu există bug-uri raportate pentru acest proiect.</p>
         ) : (
           <table className="bug-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Descriere</th>
+                <th>Title</th>
                 <th>Severity</th>
                 <th>Status</th>
                 <th>Reporter</th>
@@ -79,14 +79,14 @@ export const ProjectPage = () => {
               </tr>
             </thead>
             <tbody>
-              {bugs.map((b) => (
+              {projectBugs.map((b) => (
                 <tr key={b.id}>
-                  <td>{b.id}</td>
-                  <td>{b.description}</td>
+                  <td><Link to={`/bugs/${b.id}`}>{b.id}</Link></td>
+                  <td><Link to={`/bugs/${b.id}`}>{b.title || b.description?.slice(0, 30) || "—"}</Link></td>
                   <td>{b.severity}</td>
                   <td>{b.status}</td>
                   <td>{b.reporter?.email || "—"}</td>
-                  <td>{b.assignedTo?.email || "—"}</td>
+                  <td>{b.assignedUser?.email || "Unassigned"}</td>
                 </tr>
               ))}
             </tbody>

@@ -40,13 +40,35 @@ export const AppProvider = ({ children }) => {
         return;
       }
       console.log("Projects fetched:", res.data.Projects);
-      setProjects(res.data.Projects);
-      } catch (err) {
-        setProjects([]);
-        console.error("Error fetching projects:", err);
-      } finally {
-        setLoading(false);
+      // Normalize response: backend may return either an array (TST) or a user object with Projects (MP)
+      const payload = res.data.Projects;
+      let projectsArray = [];
+      if (Array.isArray(payload)) {
+        projectsArray = payload;
+      } else if (payload && Array.isArray(payload.Projects)) {
+        projectsArray = payload.Projects;
+      } else {
+        projectsArray = [];
       }
+
+      setProjects(projectsArray);
+      // After loading projects, fetch bugs for each project to populate UI
+      try {
+        const bugsPromises = projectsArray.map((p) =>
+          axios.get(`http://localhost:3000/bugs/project/${p.id}`).then(r => r.data).catch(() => [])
+        );
+        const bugsArrays = await Promise.all(bugsPromises);
+        const allBugs = bugsArrays.flat();
+        setBugs(allBugs);
+      } catch (errFetchBugs) {
+        console.error("Error fetching bugs:", errFetchBugs);
+      }
+    } catch (err) {
+      setProjects([]);
+      console.error("Error fetching projects:", err);
+    } finally {
+      setLoading(false);
+    }
     
   }
 
@@ -55,39 +77,50 @@ export const AppProvider = ({ children }) => {
   }, [])
 
   const addTesterToProject = (projectId, testerEmail) => {
-    setProjects((prev) =>
-      prev.map((p) =>
-        p.id === projectId
-          ? { ...p, testers: [...p.testers, testerEmail] }
-          : p
-      )
-    );
+    // Call backend to join project
+    return axios.post(`http://localhost:3000/projects/${projectId}/join`, {}, { withCredentials: true })
+      .then((res) => {
+        // optimistic update: add tester email locally
+        setProjects((prev) =>
+          prev.map((p) =>
+            p.id === projectId
+              ? { ...p, testers: [...(p.testers || []), testerEmail] }
+              : p
+          )
+        );
+        return res;
+      })
+      .catch((err) => {
+        console.error("Error joining project:", err);
+        throw err;
+      });
   };
 
   // 🔹 TST ➜ raportează bug
   const addBug = (bug) => {
-    const newBug = {
-      id: Date.now(),
-      projectId: bug.projectId,
+    // Persist bug to backend
+    return axios.post("http://localhost:3000/bugs", {
+      title: bug.title,
       description: bug.description,
       severity: bug.severity,
       priority: bug.priority,
-      commitLink: bug.commitLink,
-      reporter: bug.reporter,
-      status: "Open",
-      assignedTo: null,
-      resolveCommit: null
-    };
-
-    setBugs((prev) => [...prev, newBug]);
-
-    setProjects((prev) =>
-      prev.map((p) =>
-        p.id === bug.projectId
-          ? { ...p, bugs: [...p.bugs, newBug.id] }
-          : p
-      )
-    );
+      projectId: bug.projectId
+    }, { withCredentials: true })
+      .then((res) => {
+        const created = res.data;
+        setBugs((prev) => [...prev, created]);
+        setProjects((prev) =>
+          prev.map((p) =>
+            p.id === bug.projectId
+              ? { ...p, bugs: [...(p.bugs || []), created.id] }
+              : p
+          )
+        );
+      })
+      .catch((err) => {
+        console.error("Error creating bug:", err);
+        throw err;
+      });
   };
 
   // 🔹 MP ➜ își alocă bug
