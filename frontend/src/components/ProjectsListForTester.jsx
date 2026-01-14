@@ -8,14 +8,18 @@ export default function ProjectsListForTester() {
   const { user } = useContext(AuthContext);
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
-
   if (projects.length === 0) {
     return <p>Nu exista proiecte momentan. Revino mai tarziu.</p>;
   }
 
   const handleJoin = (projectId) => {
-    addTesterToProject(projectId, user.email);
-    alert("Te-ai alaturat proiectului ca tester.");
+    addTesterToProject(projectId, user.email)
+      .then(() => {
+        alert("Te-ai alaturat proiectului ca tester.");
+      })
+      .catch(() => {
+        alert("Eroare la alaturarea la proiect. Încearcă din nou.");
+      });
   };
 
   const getBugCountForProject = (projectId) =>
@@ -23,7 +27,6 @@ export default function ProjectsListForTester() {
 
   return (
     <div className="tester-project-list">
-      <h3>Proiecte disponibile</h3>
 
       <div className="tester-project-grid">
         {projects.map((p) => {
@@ -32,14 +35,14 @@ export default function ProjectsListForTester() {
 
           return (
             <div key={p.id} className="tester-project-card">
-              <h4>{p.name}</h4>
-              <p><strong>Repo:</strong> {p.repo}</p>
-              <p><strong>Owner:</strong> {p.owner || "—"}</p>
-              <p><strong>Testeri:</strong> {p.testers?.length || 0}</p>
+          <h4>{p.name || p.title}</h4>
+            <p><strong>Repo:</strong> {p.repo || p.commit_link}</p>
+            <p><strong>Owner:</strong> {p.owner || p.owner?.email || "—"}</p>
+            <p><strong>Testeri:</strong> {p.testers?.length || (p.Users ? p.Users.length : 0)}</p>
               <p><strong>Bug-uri:</strong> {bugCount}</p>
 
               {!isTester && (
-                <button onClick={() => handleJoin(p.id)}>
+                <button className="btn primary" onClick={() => handleJoin(p.id)}>
                   Alatura-te ca tester
                 </button>
               )}
@@ -47,7 +50,7 @@ export default function ProjectsListForTester() {
               {isTester && (
                 <>
                   <span className="tester-badge">Esti tester la acest proiect</span>
-                  <button onClick={() => setSelectedProjectId(p.id)}>
+                  <button className="btn primary" onClick={() => setSelectedProjectId(p.id)}>
                     Raporteaza bug
                   </button>
                 </>
@@ -55,7 +58,7 @@ export default function ProjectsListForTester() {
 
               {!isTester && (
                 <button
-                  className="secondary-btn"
+                  className="btn ghost"
                   onClick={() => alert("Mai intai alatura-te ca tester, apoi poti raporta bug-uri.")}
                 >
                   Raporteaza bug

@@ -24,7 +24,6 @@ export default function Home() {
   if (user.role === "MP") {
     return (
       <div className="mp-dashboard">
-        <h2>Proiectele mele</h2>
 
         <ProjectTable />
 
@@ -39,7 +38,7 @@ export default function Home() {
           <AddProjectModal onClose={() => setShowAddProject(false)} />
         )}
 
-        <BugListForMP />
+        {/* <BugListForMP /> */}
       </div>
     );
   }

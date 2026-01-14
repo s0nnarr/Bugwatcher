@@ -16,6 +16,11 @@ export default (sequelize, DataTypes) => {
         as: 'assignedUser'
       })
 
+      this.belongsTo(models.User, {
+        foreignKey: 'reporterId',
+        as: 'reporter'
+      })
+
     }
   }
   Bug.init({
@@ -25,7 +30,8 @@ export default (sequelize, DataTypes) => {
     priority: DataTypes.ENUM("Low", "Medium", "High"),
     status: DataTypes.ENUM("OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"),
     projectId: DataTypes.INTEGER,
-    assignedUserId: DataTypes.INTEGER
+    assignedUserId: DataTypes.INTEGER,
+    reporterId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Bug',

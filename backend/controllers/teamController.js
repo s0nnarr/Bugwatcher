@@ -12,19 +12,25 @@ const { Team, User } = db;
 export const createTeam = async (req, res) => {
     try {
         const { name, description } = req.body;
-        // const user = req.user;
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(403).json({ message: "Unauthorized." });
+        }
+
         if (!name || name.trim() === "") {
             return res.status(400).json({ message: "Team name is required." });
         }
 
-        const id = 1; // Temporary until auth is done
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
 
-        // const isUser = await User.findByPk(user.id);
-        const user = await User.findByPk(id); // Temporary until auth is done
-        // const isUser = user;
-        // if (!isUser) {
-        //     return res.status(404).json({ message: "User not found." });
-        // }
+        // Only MPs can create teams
+        if (user.role !== "MP") {
+            return res.status(403).json({ message: "Only MP users can create teams." });
+        }
 
         const existingTeam = await user.getTeam();
         if (existingTeam) {
@@ -37,8 +43,6 @@ export const createTeam = async (req, res) => {
         }
 
         const newTeam = await Team.create({ name, description });
-        await user.setTeam(newTeam);
-        user.role = "MP";
         user.teamId = newTeam.id;
         await user.save();
 
@@ -78,6 +82,106 @@ export const getAllTeams = async (req, res) => {
 
 }
 
-/*
-    TODO: Add more Team controllers (getTeamById, updateTeam, deleteTeam, etc...);
-*/
+/**
+ * Obține echipa curentă a utilizatorului autentificat
+ * @route GET /teams/my
+ * @returns {Object} echipa utilizatorului
+ */
+export const getMyTeam = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) return res.status(403).json({ message: "Unauthorized." });
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        if (!user.teamId) {
+            return res.status(200).json({ team: null });
+        }
+
+        const team = await Team.findByPk(user.teamId, {
+            include: [{
+                model: User,
+                attributes: ['id', 'email', 'role']
+            }]
+        });
+        return res.status(200).json(team);
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error.", error: err.message });
+    }
+};
+
+/**
+ * Invită un utilizator în echipa curentă
+ * @route POST /teams/invite
+ * @param {Object} req.body - {email}
+ * @returns {Object} mesaj de succes
+ */
+export const inviteToTeam = async (req, res) => {
+    try {
+        const inviterId = req.user?.id;
+        if (!inviterId) return res.status(403).json({ message: "Unauthorized." });
+
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: "Email is required." });
+
+        const inviter = await User.findByPk(inviterId);
+        if (!inviter) return res.status(404).json({ message: "Inviter not found." });
+
+        if (inviter.role !== "MP") {
+            return res.status(403).json({ message: "Only MP users can invite members." });
+        }
+
+        if (!inviter.teamId) {
+            return res.status(400).json({ message: "You must be in a team to invite others." });
+        }
+
+        const invitee = await User.findOne({ where: { email: email.toLowerCase().trim() } });
+        if (!invitee) {
+            return res.status(404).json({ message: "User with this email not found." });
+        }
+
+        if (invitee.teamId) {
+            return res.status(400).json({ message: "User already belongs to a team." });
+        }
+
+        // Only allow inviting other MPs
+        if (invitee.role !== "MP") {
+            return res.status(400).json({ message: "Only MP users can be invited to teams." });
+        }
+
+        invitee.teamId = inviter.teamId;
+        await invitee.save();
+
+        return res.status(200).json({ message: "User invited successfully." });
+
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error.", error: err.message });
+    }
+};
+
+/**
+ * Părăsește echipa curentă
+ * @route POST /teams/leave
+ * @returns {Object} mesaj de succes
+ */
+export const leaveTeam = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) return res.status(403).json({ message: "Unauthorized." });
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        if (!user.teamId) {
+            return res.status(400).json({ message: "You are not in a team." });
+        }
+
+        user.teamId = null;
+        await user.save();
+
+        return res.status(200).json({ message: "Left team successfully." });
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error.", error: err.message });
+    }
+};

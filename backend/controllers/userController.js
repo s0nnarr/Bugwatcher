@@ -4,7 +4,7 @@ import zxcvbn from 'zxcvbn';
 import createAccessToken from "../utils/createAccessToken.js";
 import { accessOptions } from "../utils/cookiesConfig.js";
 
-const { User, Project } = db;
+const { User, Project, Team } = db;
 
 /**
  * Creează un user nou
@@ -372,14 +372,37 @@ export const getUserProjects = async (req, res) => {
       return res.status(200).json({ Projects: userWithProjects });
     }
     else if (user.role === "TST") {
-      projects = await Project.findAll({
+      // Testers should see available projects. Include Users so we can surface tester membership
+      const projectsRaw = await Project.findAll({
         include: [{
           model: User,
-          as: "Owner",
-          attributes: ["id", "email", "role"]
+          as: 'Users',
+          attributes: ['id', 'email', 'role'],
+          through: { attributes: [] }
         }]
-      }
-      );
+      });
+
+      const projects = await Promise.all(projectsRaw.map(async (p) => {
+        const proj = p.toJSON ? p.toJSON() : p;
+        let owner = null;
+        try {
+          if (proj.owner_type === 'USER') {
+            owner = await User.findByPk(proj.owner_id, { attributes: ['id', 'email', 'role'] });
+          } else if (proj.owner_type === 'TEAM') {
+            owner = await Team.findByPk(proj.owner_id);
+          }
+        } catch (e) {
+          // ignore owner lookup errors and leave owner as null
+        }
+
+        // testers: array of tester emails
+        const testers = (proj.Users || []).map(u => u.email);
+        // whether requesting user already joined
+        const joined = (proj.Users || []).some(u => u.id === userID);
+
+        return { ...proj, Owner: owner, testers, joined };
+      }));
+
       return res.status(200).json({ Projects: projects });
     } else {
       return res.status(400).json({ message: "Invalid user role." });

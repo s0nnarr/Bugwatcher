@@ -2,6 +2,7 @@
 import { createContext, useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export const AuthContext = createContext();
@@ -36,6 +37,7 @@ export const AuthProvider = ({ children }) => {
   const logoutUser = async () => {
     await axios.post("http://localhost:3000/users/logout", {}, { withCredentials: true });
     setUser(null);
+    // Navigate to homepage - handled by component that calls this
   };
 
   const loginUser = (userData) => { // This holds the login state.
