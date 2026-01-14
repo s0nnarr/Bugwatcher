@@ -24,6 +24,9 @@ export const ProjectPage = () => {
                     return;
                 }
                 setProject(res.data);
+                if (res.data.owner_type === "USER") {
+                  const owner = await axios.get(`http://localhost:3000/users/${res.data.owner_id}`, { withCredentials: true });
+                }
             } catch (error) {
                 console.error("Error fetching project:", error);
             } finally {
@@ -46,10 +49,10 @@ export const ProjectPage = () => {
         <h1>{project.title}</h1>
         <p>{project.description || "Fără descriere..."}</p>
         <p>
-          <strong>Owner:</strong> {project.owner?.email || "—"}
+          <strong>Owner: </strong> {project.email || "—"}
         </p>
         <p>
-          <strong>Repo:</strong>{" "}
+          <strong>Repository: </strong>{" "}
           <a href={project.commit_link} target="_blank" rel="noreferrer">
             {project.commit_link}
           </a>
